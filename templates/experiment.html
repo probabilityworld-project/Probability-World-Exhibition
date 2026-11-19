@@ -1,0 +1,176 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} | Probability World 3.0</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+       
+.spinner-wheel {
+    width: 260px;
+    height: 260px;
+    border-radius: 50%;
+    margin: 35px auto;
+    background: conic-gradient(
+        #ef4444 0deg 90deg,
+        #3b82f6 90deg 180deg,
+        #22c55e 180deg 270deg,
+        #eab308 270deg 360deg
+    );
+    border: 8px solid white;
+    box-shadow:
+        0 0 25px #00d4ff88,
+        inset 0 0 20px #00000055;
+
+    transform: rotate(0deg);
+}
+
+.spinner-wheel.spinning {
+    animation: wheel-spin 3s cubic-bezier(0.15, 0.65, 0.15, 1) forwards;
+}
+
+@keyframes wheel-spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(var(--target-rotation));
+    }
+}
+
+.spinner-pointer {
+    width: 0;
+    height: 0;
+    margin: 0 auto -35px;
+    position: relative;
+    z-index: 2;
+    border-left: 17px solid transparent;
+    border-right: 17px solid transparent;
+    border-top: 35px solid white;
+    filter: drop-shadow(0 0 5px #00d4ff);
+}
+
+
+        .spin-button {
+            margin: 15px;
+            font-size: 18px;
+            padding: 14px 35px;
+        }
+
+        .result {
+            color: #00e5ff;
+            font-size: 25px;
+            margin: 20px;
+        }
+
+        .stats {
+            width: 100%;
+            max-width: 500px;
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+
+        .stats td, .stats th {
+            border: 1px solid #254764;
+            padding: 12px;
+        }
+
+        .stats th {
+            color: #00d4ff;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>{{ title }}</h1>
+    <p>Your Interactive Probability Laboratory</p>
+</header>
+
+<main>
+
+{% if title == "🎡 Spinner Lab" %}
+
+    <div class="experiment-card">
+
+        <h2>🎡 Four Colour Spinner</h2>
+
+        <p>Spin the wheel and discover random outcomes!</p>
+
+        
+<div class="spinner-pointer"></div>
+
+<div class="spinner-wheel {% if result %}spinning{% endif %}"
+     style="--target-rotation: {{ rotation }}deg;">
+</div>
+
+
+        <form method="POST">
+            <button class="spin-button" type="submit">
+                🎯 SPIN NOW
+            </button>
+        </form>
+
+        {% if result %}
+            <div class="result">
+                Result: {{ result }}!
+            </div>
+        {% endif %}
+
+        <h2>📊 Experiment Statistics</h2>
+
+        <h3>Total Spins: {{ total }}</h3>
+
+        <table class="stats">
+            <tr>
+                <th>Colour</th>
+                <th>Frequency</th>
+                <th>Probability</th>
+            </tr>
+
+            {% for color in colors %}
+            <tr>
+                <td>{{ color }}</td>
+                <td>{{ counts[color] }}</td>
+                <td>
+                    {% if total > 0 %}
+                        {{ ((counts[color] / total) * 100)|round(1) }}%
+                    {% else %}
+                        0%
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+
+    </div>
+
+{% else %}
+
+    <div class="experiment-card">
+        <h2>🧪 Experiment Station</h2>
+        <p>Your experiment page is ready.</p>
+    </div>
+
+{% endif %}
+
+<br>
+
+<a href="/">
+    <button>⬅ Back to Home</button>
+</a>
+
+</main>
+
+<footer>
+    Probability World 3.0 | Learn • Experiment • Discover
+</footer>
+
+</body>
+</html>

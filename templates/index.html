@@ -1,0 +1,65 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Probability World 3.0</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <header>
+        <h1>🌍 Probability World 3.0</h1>
+        <p>Explore Mathematics Through Interactive Experiments</p>
+    </header>
+
+    <main>
+        <h2>🧪 Choose Your Experiment</h2>
+
+        <div class="experiment-grid">
+
+            <div class="experiment-card">
+                <h3>🎡 Spinner Lab</h3>
+                <p>Explore probability using a colourful spinner.</p>
+                <a href="/experiment/spinner">
+                    <button>Start Experiment</button>
+                </a>
+            </div>
+
+            <div class="experiment-card">
+                <h3>🎲 Dice Lab</h3>
+                <p>Discover outcomes by rolling a dice.</p>
+                <a href="/experiment/dice">
+                    <button>Start Experiment</button>
+                </a>
+            </div>
+
+            <div class="experiment-card">
+                <h3>🪙 Coin Lab</h3>
+                <p>Understand heads and tails through coin flips.</p>
+                <a href="/experiment/coin">
+                    <button>Start Experiment</button>
+                </a>
+            </div>
+
+            <div class="experiment-card">
+                <h3>🃏 Card Lab</h3>
+                <p>Learn probability through playing cards.</p>
+                <a href="/experiment/card">
+                    <button>Start Experiment</button>
+                </a>
+            </div>
+
+        </div>
+    </main>
+
+    <footer>
+        <p>Probability World 3.0 | Learn • Experiment • Discover</p>
+    </footer>
+
+</body>
+</html>
