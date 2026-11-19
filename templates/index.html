@@ -8,6 +8,157 @@
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='style.css') }}">
+
+
+<style>
+    .info-section {
+        background: #10263d;
+        border: 1px solid #00d4ff;
+        border-radius: 16px;
+        padding: 28px;
+        margin: 35px auto;
+        max-width: 1000px;
+        text-align: center;
+        box-shadow: 0 0 20px #00d4ff15;
+    }
+
+    .info-section h2 {
+        color: #00d4ff;
+        margin-bottom: 18px;
+    }
+
+    .info-section p {
+        color: #b8c9d9;
+        line-height: 1.8;
+    }
+
+    .project-highlight {
+        color: #00e5ff;
+        font-weight: bold;
+    }
+
+
+/* THEORETICAL VS EXPERIMENTAL COMPARISON */
+
+.probability-comparison {
+    background: linear-gradient(135deg, #0b192b, #142f49);
+    border: 1px solid #00d4ff;
+    box-shadow: 0 0 25px #00d4ff20;
+}
+
+.probability-comparison > h2 {
+    color: #00d4ff;
+    font-size: 28px;
+}
+
+.comparison-cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 22px;
+    margin: 30px 0;
+}
+
+.comparison-card {
+    padding: 25px;
+    border-radius: 16px;
+    text-align: center;
+    background: #142f49;
+    border: 1px solid #315675;
+    transition: 0.3s ease;
+}
+
+.comparison-card:hover {
+    transform: translateY(-7px);
+    box-shadow: 0 8px 25px #00d4ff25;
+}
+
+.theoretical-card {
+    border-top: 4px solid #35d9ff;
+}
+
+.experimental-card {
+    border-top: 4px solid #61e6b0;
+}
+
+.comparison-card h3 {
+    color: #35d9ff;
+    margin: 12px 0;
+}
+
+.experimental-card h3 {
+    color: #61e6b0;
+}
+
+.comparison-card p {
+    color: #c1d1df;
+    line-height: 1.7;
+}
+
+.comparison-heading {
+    color: #00d4ff;
+    margin: 30px 0 18px;
+}
+
+.comparison-table-wrapper {
+    overflow-x: auto;
+    margin: 20px 0;
+    border-radius: 12px;
+}
+
+.comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #10263d;
+    color: #eaf6ff;
+}
+
+.comparison-table th {
+    background: #087caa;
+    color: white;
+    padding: 15px;
+}
+
+.comparison-table td {
+    padding: 14px;
+    border: 1px solid #315675;
+    text-align: center;
+}
+
+.comparison-table tr:hover {
+    background: #193c59;
+}
+
+.example-result {
+    background: #10263d;
+    border: 1px solid #00d4ff;
+    border-radius: 14px;
+    padding: 20px;
+    margin: 20px 0;
+}
+
+.example-result h3 {
+    color: #61e6b0;
+    font-size: 23px;
+}
+
+@media (max-width: 650px) {
+    .comparison-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .comparison-table {
+        min-width: 520px;
+    }
+
+    .probability-comparison > h2 {
+        font-size: 22px;
+    }
+}
+
+
+</style>
+
+
 </head>
 
 <body>
@@ -55,6 +206,153 @@
             </div>
 
         </div>
+
+
+<section class="info-section">
+
+    <h2>🔬 About Probability World 3.0</h2>
+
+    <p>
+        Welcome to <span class="project-highlight">Probability World 3.0</span>,
+        an interactive mathematical laboratory designed to make
+        learning probability simple, interesting and practical.
+    </p>
+
+    <p>
+        Through Spinner, Dice, Coin Toss and Playing Card experiments,
+        students can explore random events, observe outcomes,
+        calculate probabilities and understand mathematical concepts
+        through real-time experiments.
+    </p>
+
+    <p>
+        Our mission is to connect theoretical mathematics
+        with practical learning.
+    </p>
+
+    <p class="project-highlight">
+        Learn • Experiment • Calculate • Discover
+    </p>
+
+</section>
+
+<section class="info-section">
+
+    <h2>📚 Mathematical Concepts</h2>
+
+    <p><strong>1. Probability</strong></p>
+    <p>Probability is the measure of how likely an event is to happen.</p>
+
+    <p class="project-highlight">
+        P(E) = Favourable Outcomes / Total Possible Outcomes
+    </p>
+
+    <p><strong>2. Theoretical Probability</strong></p>
+    <p>
+        It is the probability calculated mathematically
+        before performing an experiment.
+    </p>
+
+    <p><strong>3. Experimental Probability</strong></p>
+    <p>
+        It is calculated using the actual results obtained
+        after performing an experiment.
+    </p>
+
+    <p><strong>4. Sample Space</strong></p>
+    <p>
+        The set of all possible outcomes of an experiment
+        is called its sample space.
+    </p>
+
+    <p><strong>5. Event</strong></p>
+    <p>
+        An event is a particular outcome or a collection
+        of outcomes of an experiment.
+    </p>
+
+</section>
+
+
+<section class="info-section probability-comparison">
+
+    <h2>⚖️ Theoretical vs Experimental Probability</h2>
+
+    <p>
+        Explore the difference between mathematical predictions
+        and actual experimental results.
+    </p>
+
+    <div class="comparison-cards">
+
+        <div class="comparison-card theoretical-card">
+            <h3>📘 Theoretical Probability</h3>
+            <p>Calculated before performing an experiment.</p>
+            <h3>P(E) = Favourable Outcomes / Total Outcomes</h3>
+        </div>
+
+        <div class="comparison-card experimental-card">
+            <h3>🔬 Experimental Probability</h3>
+            <p>Calculated using actual experimental results.</p>
+            <h3>P(E) = Observed Outcomes / Total Trials</h3>
+        </div>
+
+    </div>
+
+    <h3 class="comparison-heading">📊 Key Differences</h3>
+
+    <div class="comparison-table-wrapper">
+        <table class="comparison-table">
+            <tr>
+                <th>Basis</th>
+                <th>Theoretical</th>
+                <th>Experimental</th>
+            </tr>
+            <tr>
+                <td>Based On</td>
+                <td>Mathematical calculation</td>
+                <td>Actual observations</td>
+            </tr>
+            <tr>
+                <td>Calculation</td>
+                <td>Expected outcomes</td>
+                <td>Observed outcomes</td>
+            </tr>
+            <tr>
+                <td>Trials</td>
+                <td>Not required</td>
+                <td>Required</td>
+            </tr>
+            <tr>
+                <td>Result</td>
+                <td>Expected probability</td>
+                <td>Actual probability</td>
+            </tr>
+        </table>
+    </div>
+
+    <h3 class="comparison-heading">🎲 Practical Dice Example</h3>
+
+    <p>
+        Suppose a fair dice is rolled 60 times and the number
+        6 appears 8 times.
+    </p>
+
+    <div class="example-result">
+        <p><strong>Theoretical Probability:</strong></p>
+        <h3>1 / 6 = 16.67%</h3>
+
+        <p><strong>Experimental Probability:</strong></p>
+        <h3>8 / 60 = 13.33%</h3>
+    </div>
+
+    <p class="project-highlight">
+        More trials can help experimental probability approach
+        theoretical probability.
+    </p>
+
+</section>
+
     </main>
 
     <footer>
