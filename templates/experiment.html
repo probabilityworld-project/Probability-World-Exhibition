@@ -4,84 +4,252 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>{{ title }} | Probability World 3.0</title>
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='style.css') }}">
 
     <style>
-       
-.spinner-wheel {
-    width: 260px;
-    height: 260px;
-    border-radius: 50%;
-    margin: 35px auto;
-    background: conic-gradient(
-        #ef4444 0deg 90deg,
-        #3b82f6 90deg 180deg,
-        #22c55e 180deg 270deg,
-        #eab308 270deg 360deg
-    );
-    border: 8px solid white;
-    box-shadow:
-        0 0 25px #00d4ff88,
-        inset 0 0 20px #00000055;
+        .lab-panel {
+            max-width: 850px;
+            margin: 25px auto;
+            padding: 25px;
+            background: #10263d;
+            border: 1px solid #00d4ff;
+            border-radius: 18px;
+            text-align: center;
+            box-shadow: 0 0 25px #00d4ff18;
+        }
 
-    transform: rotate(0deg);
-}
+        .lab-panel h2 {
+            margin-bottom: 15px;
+        }
 
-.spinner-wheel.spinning {
-    animation: wheel-spin 3s cubic-bezier(0.15, 0.65, 0.15, 1) forwards;
-}
-
-@keyframes wheel-spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(var(--target-rotation));
-    }
-}
-
-.spinner-pointer {
-    width: 0;
-    height: 0;
-    margin: 0 auto -35px;
-    position: relative;
-    z-index: 2;
-    border-left: 17px solid transparent;
-    border-right: 17px solid transparent;
-    border-top: 35px solid white;
-    filter: drop-shadow(0 0 5px #00d4ff);
-}
-
-
-        .spin-button {
-            margin: 15px;
-            font-size: 18px;
-            padding: 14px 35px;
+        .lab-description {
+            color: #b8c9d9;
+            margin-bottom: 20px;
         }
 
         .result {
             color: #00e5ff;
             font-size: 25px;
-            margin: 20px;
+            font-weight: bold;
+            margin: 22px 0;
         }
+
+        .lab-button {
+            margin: 15px;
+            padding: 14px 30px;
+            font-size: 17px;
+            min-height: 48px;
+        }
+
+        /* SPINNER */
+
+        .spinner-pointer {
+            width: 0;
+            height: 0;
+            margin: 0 auto -30px;
+            position: relative;
+            z-index: 2;
+            border-left: 17px solid transparent;
+            border-right: 17px solid transparent;
+            border-top: 35px solid white;
+            filter: drop-shadow(0 0 5px #00d4ff);
+        }
+
+        .spinner-wheel {
+            width: min(260px, 75vw);
+            aspect-ratio: 1;
+            border-radius: 50%;
+            margin: 30px auto;
+            background: conic-gradient(
+                #ef4444 0deg 90deg,
+                #3b82f6 90deg 180deg,
+                #22c55e 180deg 270deg,
+                #eab308 270deg 360deg
+            );
+            border: 8px solid white;
+            box-shadow: 0 0 25px #00d4ff88;
+        }
+
+        .spinner-wheel.spinning {
+            animation: wheel-spin 3s cubic-bezier(.15,.65,.15,1) forwards;
+        }
+
+        @keyframes wheel-spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(var(--target-rotation)); }
+        }
+
+        /* DICE */
+
+        .dice-box {
+            width: 145px;
+            height: 145px;
+            margin: 30px auto;
+            border-radius: 22px;
+            background: #f8fafc;
+            color: #10263d;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 85px;
+            font-weight: bold;
+            box-shadow: 0 0 25px #00d4ff66;
+        }
+
+        .dice-box.rolling {
+            animation: dice-roll .8s ease;
+        }
+
+        @keyframes dice-roll {
+            0% { transform: rotate(0deg) scale(1); }
+            30% { transform: rotate(25deg) scale(1.1); }
+            60% { transform: rotate(-25deg) scale(.9); }
+            100% { transform: rotate(0deg) scale(1); }
+        }
+
+        /* COIN */
+
+        .coin {
+            width: 165px;
+            height: 165px;
+            border-radius: 50%;
+            margin: 30px auto;
+            background: radial-gradient(circle, #ffe78a, #d69b19);
+            border: 8px solid #fff0a6;
+            color: #573b00;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 23px;
+            font-weight: bold;
+            box-shadow: 0 0 25px #eab30866;
+        }
+
+        .coin.flipping {
+            animation: coin-flip 1s ease;
+        }
+
+        @keyframes coin-flip {
+            0% { transform: rotateY(0deg) scale(1); }
+            50% { transform: rotateY(900deg) scale(1.2); }
+            100% { transform: rotateY(1800deg) scale(1); }
+        }
+
+        /* PLAYING CARD */
+
+        .playing-card {
+            width: 145px;
+            height: 205px;
+            margin: 30px auto;
+            background: white;
+            color: #111827;
+            border-radius: 13px;
+            border: 3px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 12px;
+            box-shadow: 0 0 25px #00d4ff55;
+            animation: card-draw .7s ease;
+        }
+
+        .playing-card.red {
+            color: #dc2626;
+        }
+
+        .playing-card.black {
+            color: #111827;
+        }
+
+        .card-corner {
+            font-size: 23px;
+            font-weight: bold;
+            text-align: left;
+        }
+
+        .card-center {
+            font-size: 65px;
+            font-weight: bold;
+        }
+
+        .card-bottom {
+            transform: rotate(180deg);
+        }
+
+        @keyframes card-draw {
+            from {
+                opacity: 0;
+                transform: translateY(25px) rotate(-10deg);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) rotate(0);
+            }
+        }
+
+        /* STATISTICS */
 
         .stats {
             width: 100%;
-            max-width: 500px;
-            margin: 20px auto;
+            max-width: 550px;
+            margin: 25px auto;
             border-collapse: collapse;
+            color: white;
         }
 
-        .stats td, .stats th {
-            border: 1px solid #254764;
+        .stats th,
+        .stats td {
+            border: 1px solid #31516d;
             padding: 12px;
         }
 
         .stats th {
             color: #00d4ff;
+            background: #0a1d30;
+        }
+
+        .stats tr:nth-child(even) {
+            background: #16334d;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+        }
+
+        .back-button button {
+            min-height: 45px;
+        }
+
+        @media (max-width: 600px) {
+            .lab-panel {
+                padding: 16px 10px;
+                margin: 15px auto;
+            }
+
+            .stats th,
+            .stats td {
+                padding: 8px 5px;
+                font-size: 13px;
+            }
+
+            .result {
+                font-size: 21px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .spinner-wheel,
+            .dice-box,
+            .coin,
+            .playing-card {
+                animation-duration: .01ms !important;
+            }
         }
     </style>
 </head>
@@ -95,36 +263,32 @@
 
 <main>
 
-{% if title == "🎡 Spinner Lab" %}
+    <!-- SPINNER LAB -->
+    {% if title == "🎡 Spinner Lab" %}
 
-    <div class="experiment-card">
-
+    <div class="lab-panel">
         <h2>🎡 Four Colour Spinner</h2>
+        <p class="lab-description">
+            Spin the wheel and explore random outcomes!
+        </p>
 
-        <p>Spin the wheel and discover random outcomes!</p>
+        <div class="spinner-pointer"></div>
 
-        
-<div class="spinner-pointer"></div>
-
-<div class="spinner-wheel {% if result %}spinning{% endif %}"
-     style="--target-rotation: {{ rotation }}deg;">
-</div>
-
+        <div class="spinner-wheel {% if result %}spinning{% endif %}"
+             style="--target-rotation: {{ rotation }}deg;">
+        </div>
 
         <form method="POST">
-            <button class="spin-button" type="submit">
+            <button class="lab-button" type="submit">
                 🎯 SPIN NOW
             </button>
         </form>
 
         {% if result %}
-            <div class="result">
-                Result: {{ result }}!
-            </div>
+        <div class="result">Result: {{ result }}!</div>
         {% endif %}
 
         <h2>📊 Experiment Statistics</h2>
-
         <h3>Total Spins: {{ total }}</h3>
 
         <table class="stats">
@@ -148,23 +312,216 @@
             </tr>
             {% endfor %}
         </table>
-
     </div>
 
-{% else %}
+    <!-- DICE LAB -->
+    {% elif title == "🎲 Dice Lab" %}
 
-    <div class="experiment-card">
-        <h2>🧪 Experiment Station</h2>
-        <p>Your experiment page is ready.</p>
+    <div class="lab-panel">
+        <h2>🎲 Roll the Dice</h2>
+        <p class="lab-description">
+            Roll a six-sided dice and observe the outcomes.
+        </p>
+
+        <div class="dice-box {% if result is not none %}rolling{% endif %}">
+            {% if result is not none %}
+                {{ result }}
+            {% else %}
+                🎲
+            {% endif %}
+        </div>
+
+        <form method="POST">
+            <button class="lab-button" type="submit">
+                🎲 ROLL DICE
+            </button>
+        </form>
+
+        {% if result is not none %}
+        <div class="result">You rolled: {{ result }}</div>
+        {% endif %}
+
+        <h2>📊 Experiment Statistics</h2>
+        <h3>Total Rolls: {{ total }}</h3>
+
+        <table class="stats">
+            <tr>
+                <th>Dice Face</th>
+                <th>Frequency</th>
+                <th>Probability</th>
+            </tr>
+
+            {% for face in range(1, 7) %}
+                {% set key = face|string %}
+                <tr>
+                    <td>{{ face }}</td>
+                    <td>{{ counts[key] }}</td>
+                    <td>
+                        {% if total > 0 %}
+                            {{ ((counts[key] / total) * 100)|round(1) }}%
+                        {% else %}
+                            0%
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
     </div>
 
-{% endif %}
+    <!-- COIN LAB -->
+    {% elif title == "🪙 Coin Lab" %}
 
-<br>
+    <div class="lab-panel">
+        <h2>🪙 Coin Toss Experiment</h2>
+        <p class="lab-description">
+            Flip a coin and discover Heads or Tails.
+        </p>
 
-<a href="/">
-    <button>⬅ Back to Home</button>
-</a>
+        <div class="coin {% if result %}flipping{% endif %}">
+            {% if result %}
+                {{ result }}
+            {% else %}
+                ?
+            {% endif %}
+        </div>
+
+        <form method="POST">
+            <button class="lab-button" type="submit">
+                🪙 FLIP COIN
+            </button>
+        </form>
+
+        {% if result %}
+        <div class="result">Result: {{ result }}!</div>
+        {% endif %}
+
+        <h2>📊 Experiment Statistics</h2>
+        <h3>Total Tosses: {{ total }}</h3>
+
+        <table class="stats">
+            <tr>
+                <th>Outcome</th>
+                <th>Frequency</th>
+                <th>Probability</th>
+            </tr>
+
+            {% for side in ["HEADS", "TAILS"] %}
+            <tr>
+                <td>{{ side }}</td>
+                <td>{{ counts[side] }}</td>
+                <td>
+                    {% if total > 0 %}
+                        {{ ((counts[side] / total) * 100)|round(1) }}%
+                    {% else %}
+                        0%
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <!-- CARD LAB -->
+    {% elif title == "🃏 Card Lab" %}
+
+    <div class="lab-panel">
+        <h2>🃏 Playing Card Experiment</h2>
+        <p class="lab-description">
+            Draw cards from a shuffled standard 52-card deck.
+            Each card is drawn only once per deck.
+        </p>
+
+        {% if card_result %}
+
+            {% if card_result.suit == "Hearts" %}
+                {% set symbol = "♥" %}
+                {% set card_color = "red" %}
+            {% elif card_result.suit == "Diamonds" %}
+                {% set symbol = "♦" %}
+                {% set card_color = "red" %}
+            {% elif card_result.suit == "Clubs" %}
+                {% set symbol = "♣" %}
+                {% set card_color = "black" %}
+            {% else %}
+                {% set symbol = "♠" %}
+                {% set card_color = "black" %}
+            {% endif %}
+
+            <div class="playing-card {{ card_color }}">
+                <div class="card-corner">
+                    {{ card_result.rank }}{{ symbol }}
+                </div>
+
+                <div class="card-center">
+                    {{ symbol }}
+                </div>
+
+                <div class="card-corner card-bottom">
+                    {{ card_result.rank }}{{ symbol }}
+                </div>
+            </div>
+
+            <div class="result">
+                Drawn: {{ card_result.rank }} of {{ card_result.suit }}
+            </div>
+
+        {% else %}
+
+            <div class="playing-card">
+                <div class="card-corner">?</div>
+                <div class="card-center">🂠</div>
+                <div class="card-corner card-bottom">?</div>
+            </div>
+
+        {% endif %}
+
+        <form method="POST">
+            <button class="lab-button" type="submit">
+                🃏 DRAW A CARD
+            </button>
+        </form>
+
+        <h3>Cards Remaining: {{ remaining }}</h3>
+
+        {% if remaining == 0 %}
+            <p class="result">
+                Deck completed! Draw again to shuffle a new deck.
+            </p>
+        {% endif %}
+
+        <h2>📊 Suit Statistics</h2>
+        <h3>Total Cards Drawn: {{ total }}</h3>
+
+        <table class="stats">
+            <tr>
+                <th>Suit</th>
+                <th>Frequency</th>
+                <th>Probability</th>
+            </tr>
+
+            {% for suit in ["Hearts", "Diamonds", "Clubs", "Spades"] %}
+            <tr>
+                <td>{{ suit }}</td>
+                <td>{{ counts[suit] }}</td>
+                <td>
+                    {% if total > 0 %}
+                        {{ ((counts[suit] / total) * 100)|round(1) }}%
+                    {% else %}
+                        0%
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    {% endif %}
+
+    <div style="text-align:center;">
+        <a href="/" class="back-button">
+            <button type="button">⬅ Back to Home</button>
+        </a>
+    </div>
 
 </main>
 
