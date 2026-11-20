@@ -45,6 +45,19 @@ def experiment(name):
 
     title = experiments[name]
 
+    # Bulk simulation input (kept separate from the existing single-trial action).
+    bulk_trials = 0
+    bulk_message = None
+    if request.method == "POST" and request.form.get("action") == "bulk":
+        try:
+            bulk_trials = int(request.form.get("trials", "0"))
+        except (TypeError, ValueError):
+            bulk_trials = 0
+
+        if not 1 <= bulk_trials <= 10000:
+            bulk_message = "Please enter a number of trials between 1 and 10,000."
+            bulk_trials = 0
+
 
     # =================================
     # EXPERIMENT RESET
@@ -81,8 +94,16 @@ def experiment(name):
         result = None
         rotation = 0
 
-        if request.method == "POST":
+        if request.method == "POST" and request.form.get("action") == "bulk" and bulk_trials:
+            counts = session["spinner_counts"]
+            for _ in range(bulk_trials):
+                outcome = random.choice(colors)
+                counts[outcome] += 1
+            session["spinner_spins"] += bulk_trials
+            session["spinner_counts"] = counts
+            bulk_message = f"Completed {bulk_trials:,} spinner trials!"
 
+        elif request.method == "POST" and request.form.get("action") != "reset":
             result_index = random.randrange(len(colors))
             result = colors[result_index]
 
@@ -100,6 +121,7 @@ def experiment(name):
         return render_template(
             "experiment.html",
             title=title,
+            bulk_message=bulk_message,
             graph_labels=colors,
 graph_values=[session["spinner_counts"][color] for color in colors],
             theoretical_values=[25, 25, 25, 25],
@@ -124,8 +146,16 @@ graph_values=[session["spinner_counts"][color] for color in colors],
 
         result = None
 
-        if request.method == "POST":
+        if request.method == "POST" and request.form.get("action") == "bulk" and bulk_trials:
+            counts = session["dice_counts"]
+            for _ in range(bulk_trials):
+                outcome = random.randint(1, 6)
+                counts[str(outcome)] += 1
+            session["dice_total"] += bulk_trials
+            session["dice_counts"] = counts
+            bulk_message = f"Completed {bulk_trials:,} dice rolls!"
 
+        elif request.method == "POST" and request.form.get("action") != "reset":
             result = random.randint(1, 6)
 
             session["dice_total"] += 1
@@ -138,6 +168,7 @@ graph_values=[session["spinner_counts"][color] for color in colors],
         return render_template(
             "experiment.html",
             title=title,
+            bulk_message=bulk_message,
             graph_labels=[str(i) for i in range(1, 7)],
 graph_values=[session["dice_counts"][str(i)] for i in range(1, 7)],
            theoretical_values=[16.67, 16.67, 16.67, 16.67, 16.67, 16.67],
@@ -161,8 +192,16 @@ graph_values=[session["dice_counts"][str(i)] for i in range(1, 7)],
 
         result = None
 
-        if request.method == "POST":
+        if request.method == "POST" and request.form.get("action") == "bulk" and bulk_trials:
+            counts = session["coin_counts"]
+            for _ in range(bulk_trials):
+                outcome = random.choice(["HEADS", "TAILS"])
+                counts[outcome] += 1
+            session["coin_total"] += bulk_trials
+            session["coin_counts"] = counts
+            bulk_message = f"Completed {bulk_trials:,} coin tosses!"
 
+        elif request.method == "POST" and request.form.get("action") != "reset":
             result = random.choice(["HEADS", "TAILS"])
 
             session["coin_total"] += 1
@@ -175,6 +214,7 @@ graph_values=[session["dice_counts"][str(i)] for i in range(1, 7)],
         return render_template(
             "experiment.html",
             title=title,
+            bulk_message=bulk_message,
             graph_labels=["HEADS", "TAILS"],
 graph_values=[session["coin_counts"][side] for side in ["HEADS", "TAILS"]],
             theoretical_values=[50, 50],
@@ -204,8 +244,29 @@ graph_values=[session["coin_counts"][side] for side in ["HEADS", "TAILS"]],
 
         card_result = None
 
-        if request.method == "POST":
+        if request.method == "POST" and request.form.get("action") == "bulk" and bulk_trials:
+            deck = session["card_deck"]
+            counts = session["card_counts"]
 
+            for _ in range(bulk_trials):
+                # A standard deck is reshuffled only after all 52 cards are drawn.
+                if not deck:
+                    deck = [
+                        {"rank": rank, "suit": suit}
+                        for suit in suits
+                        for rank in ranks
+                    ]
+                    random.shuffle(deck)
+
+                drawn_card = deck.pop()
+                counts[drawn_card["suit"]] += 1
+
+            session["card_deck"] = deck
+            session["card_total"] += bulk_trials
+            session["card_counts"] = counts
+            bulk_message = f"Completed {bulk_trials:,} card draws!"
+
+        elif request.method == "POST" and request.form.get("action") != "reset":
             deck = session["card_deck"]
 
             # Create and shuffle a fresh deck
@@ -233,6 +294,7 @@ graph_values=[session["coin_counts"][side] for side in ["HEADS", "TAILS"]],
         return render_template(
             "experiment.html",
             title=title,
+            bulk_message=bulk_message,
             graph_labels=suits,
 graph_values=[session["card_counts"][suit] for suit in suits],
             theoretical_values=[25, 25, 25, 25],
