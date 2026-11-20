@@ -251,6 +251,18 @@
                 animation-duration: .01ms !important;
             }
         }
+
+.reset-button {
+    background: #b91c1c;
+    border: 1px solid #fb7185;
+    color: white;
+}
+
+.reset-button:hover {
+    background: #991b1b;
+    transform: translateY(-2px);
+}
+
     </style>
 </head>
 
@@ -517,6 +529,21 @@
 
     {% endif %}
 
+    <div class="lab-panel" style="margin-top: 25px;">
+        <h2>📊 Live Probability Graph</h2>
+        <canvas id="probabilityChart"
+            data-labels='{{ graph_labels | tojson }}'
+            data-frequencies='{{ graph_values | tojson }}'
+            data-theoretical-values='{{ theoretical_values | tojson }}'></canvas>
+    </div>
+
+    <form method="POST" style="text-align:center; margin: 20px;">
+        <input type="hidden" name="action" value="reset">
+        <button class="lab-button reset-button" type="submit">
+            🔄 RESET EXPERIMENT
+        </button>
+    </form>
+
     <div style="text-align:center;">
         <a href="/" class="back-button">
             <button type="button">⬅ Back to Home</button>
@@ -528,6 +555,72 @@
 <footer>
     Probability World 3.0 | Learn • Experiment • Discover
 </footer>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+const ctx = document.getElementById('probabilityChart');
+const labels = JSON.parse(ctx.dataset.labels);
+const frequencies = JSON.parse(ctx.dataset.frequencies);
+const theoreticalValues = JSON.parse(ctx.dataset.theoreticalValues);
+
+const total = frequencies.reduce((sum, value) => sum + value, 0);
+
+const experimentalValues = frequencies.map(value =>
+    total > 0 ? (value / total) * 100 : 0
+);
+
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: labels,
+        datasets: [
+            {
+                label: 'Theoretical Probability (%)',
+                data: theoreticalValues,
+                backgroundColor: '#38bdf8',
+                borderRadius: 6
+            },
+            {
+                label: 'Experimental Probability (%)',
+                data: experimentalValues,
+                backgroundColor: '#f59e0b',
+                borderRadius: 6
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true,
+                max: 100,
+                title: {
+                    display: true,
+                    text: 'Probability (%)'
+                }
+            }
+        }
+    }
+});
+</script>
+
+
+<script>
+// Keep the page at the same position after an experiment POST/reload.
+document.querySelectorAll('form[method="POST"], form[method="post"]').forEach(form => {
+    form.addEventListener('submit', () => {
+        sessionStorage.setItem('probabilityWorldScrollY', String(window.scrollY));
+    });
+});
+
+window.addEventListener('load', () => {
+    const savedScrollY = sessionStorage.getItem('probabilityWorldScrollY');
+    if (savedScrollY !== null) {
+        sessionStorage.removeItem('probabilityWorldScrollY');
+        window.scrollTo(0, Number(savedScrollY));
+    }
+});
+</script>
 
 </body>
 </html>

@@ -1,5 +1,5 @@
 
-from flask import Flask, render_template, request, session
+from flask import Flask, render_template, request, session, redirect, url_for
 import random
 import os
 
@@ -12,8 +12,22 @@ app.secret_key = os.environ.get(
 
 
 @app.route("/")
-def home():
-    return render_template("index.html")
+def index():
+
+    dashboard_totals = {
+        "spinner": session.get("spinner_spins", 0),
+        "dice": session.get("dice_total", 0),
+        "coin": session.get("coin_total", 0),
+        "card": session.get("card_total", 0)
+    }
+
+    overall_total = sum(dashboard_totals.values())
+
+    return render_template(
+        "index.html",
+        dashboard_totals=dashboard_totals,
+        overall_total=overall_total
+    )
 
 
 @app.route("/experiment/<name>", methods=["GET", "POST"])
@@ -30,6 +44,25 @@ def experiment(name):
         return "Experiment not found", 404
 
     title = experiments[name]
+
+
+    # =================================
+    # EXPERIMENT RESET
+    # =================================
+
+    if request.method == "POST" and request.form.get("action") == "reset":
+
+        reset_keys = {
+            "spinner": ["spinner_spins", "spinner_counts"],
+            "dice": ["dice_total", "dice_counts"],
+            "coin": ["coin_total", "coin_counts"],
+            "card": ["card_deck", "card_total", "card_counts"]
+        }
+
+        for key in reset_keys[name]:
+            session.pop(key, None)
+
+        return redirect(url_for("experiment", name=name))
 
     # =================================
     # SPINNER LAB
@@ -67,6 +100,9 @@ def experiment(name):
         return render_template(
             "experiment.html",
             title=title,
+            graph_labels=colors,
+graph_values=[session["spinner_counts"][color] for color in colors],
+            theoretical_values=[25, 25, 25, 25],
             colors=colors,
             result=result,
             rotation=rotation,
@@ -102,6 +138,9 @@ def experiment(name):
         return render_template(
             "experiment.html",
             title=title,
+            graph_labels=[str(i) for i in range(1, 7)],
+graph_values=[session["dice_counts"][str(i)] for i in range(1, 7)],
+           theoretical_values=[16.67, 16.67, 16.67, 16.67, 16.67, 16.67],
             result=result,
             total=session["dice_total"],
             counts=session["dice_counts"]
@@ -136,6 +175,9 @@ def experiment(name):
         return render_template(
             "experiment.html",
             title=title,
+            graph_labels=["HEADS", "TAILS"],
+graph_values=[session["coin_counts"][side] for side in ["HEADS", "TAILS"]],
+            theoretical_values=[50, 50],
             result=result,
             total=session["coin_total"],
             counts=session["coin_counts"]
@@ -191,6 +233,9 @@ def experiment(name):
         return render_template(
             "experiment.html",
             title=title,
+            graph_labels=suits,
+graph_values=[session["card_counts"][suit] for suit in suits],
+            theoretical_values=[25, 25, 25, 25],
             card_result=card_result,
             total=session["card_total"],
             counts=session["card_counts"],

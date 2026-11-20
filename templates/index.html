@@ -207,6 +207,43 @@
 
         </div>
 
+<section class="dashboard-section">
+    <h2>📊 LIVE PROBABILITY DASHBOARD</h2>
+    <p>Track all your experiments in real time!</p>
+
+    <div class="dashboard-grid">
+
+        <div class="dashboard-card">
+            <h3>🎡 Spinner</h3>
+            <h2>{{ dashboard_totals.spinner }}</h2>
+            <p>Total Spins</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h3>🎲 Dice</h3>
+            <h2>{{ dashboard_totals.dice }}</h2>
+            <p>Total Rolls</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h3>🪙 Coin</h3>
+            <h2>{{ dashboard_totals.coin }}</h2>
+            <p>Total Flips</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h3>🃏 Cards</h3>
+            <h2>{{ dashboard_totals.card }}</h2>
+            <p>Total Draws</p>
+        </div>
+
+    </div>
+
+    <div class="overall-card">
+        <h2>{{ overall_total }}</h2>
+        <p>OVERALL EXPERIMENT TRIALS</p>
+    </div>
+</section>
 
 <section class="info-section">
 
