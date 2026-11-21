@@ -566,6 +566,77 @@
         {% endif %}
     </div>
 
+    <div class="lab-panel">
+        <h2>🎯 Prediction Challenge</h2>
+        <p class="lab-description">
+            Predict which outcome will appear most often, run your simulation,
+            and see whether your prediction was correct!
+        </p>
+
+        <form method="POST" class="prediction-form">
+            <input type="hidden" name="action" value="prediction">
+
+            <label for="prediction" style="display:block; margin-bottom:10px; color:#b8c9d9;">
+                Your prediction
+            </label>
+            <select
+                id="prediction"
+                name="prediction"
+                required
+                style="width:min(280px, 90%); padding:12px; border-radius:8px; border:1px solid #00d4ff; font-size:17px; margin-bottom:18px;"
+            >
+                {% for option in prediction_options %}
+                    <option value="{{ option }}">{{ option }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="prediction_trials" style="display:block; margin-bottom:10px; color:#b8c9d9;">
+                Number of trials (1–10,000)
+            </label>
+            <input
+                id="prediction_trials"
+                name="prediction_trials"
+                type="number"
+                min="1"
+                max="10000"
+                step="1"
+                required
+                placeholder="e.g. 100"
+                style="width:min(280px, 90%); padding:12px; border-radius:8px; border:1px solid #00d4ff; font-size:17px;"
+            >
+            <br>
+            <button class="lab-button" type="submit">
+                🎯 SUBMIT PREDICTION & PLAY
+            </button>
+        </form>
+
+        {% if prediction_error %}
+            <div class="result">{{ prediction_error }}</div>
+        {% endif %}
+
+        {% if prediction_result %}
+            <div class="result">
+                {% if prediction_result.correct %}
+                    🎉 Correct prediction!
+                {% else %}
+                    🙂 Good try! Better luck next time.
+                {% endif %}
+            </div>
+            <p>
+                Your prediction: <strong>{{ prediction_result.predicted }}</strong>
+            </p>
+            <p>
+                Actual most frequent outcome(s):
+                <strong>{{ prediction_result.winners | join(", ") }}</strong>
+            </p>
+            <p>
+                Your predicted outcome appeared
+                <strong>{{ prediction_result.predicted_count }}</strong>
+                time(s) out of {{ prediction_result.trials }} trials.
+            </p>
+        {% endif %}
+    </div>
+
     <div class="lab-panel" style="margin-top: 25px;">
         <h2>📊 Live Probability Graph</h2>
         <canvas id="probabilityChart"
