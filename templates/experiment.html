@@ -730,5 +730,96 @@ window.addEventListener('load', () => {
 });
 </script>
 
+<!-- Probability World 3.0: accessible sound controls and synthesized lab audio -->
+<style>
+#pwSoundToggle{position:fixed;right:18px;bottom:18px;z-index:9999;background:#102f49;color:#eafaff;border:1px solid #35d9ff;border-radius:999px;padding:11px 16px;box-shadow:0 4px 18px #0006;font-weight:700}
+#pwSoundToggle:focus-visible{outline:3px solid white;outline-offset:3px}
+</style>
+<button id="pwSoundToggle" type="button" aria-pressed="true" aria-label="Turn sound off">🔊 Sound: ON</button>
+<script>
+(() => {
+    const toggle = document.getElementById('pwSoundToggle');
+    let soundOn = true;
+    try { soundOn = localStorage.getItem('pwSoundEnabled') !== 'false'; } catch (_) {}
+    let audioContext = null;
+    const updateToggle = () => {
+        toggle.textContent = soundOn ? '🔊 Sound: ON' : '🔇 Sound: OFF';
+        toggle.setAttribute('aria-pressed', String(soundOn));
+        toggle.setAttribute('aria-label', soundOn ? 'Turn sound off' : 'Turn sound on');
+    };
+    updateToggle();
+    function context() {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return null;
+        if (!audioContext) audioContext = new AudioCtx();
+        if (audioContext.state === 'suspended') audioContext.resume().catch(() => {});
+        return audioContext;
+    }
+    function tone(freq, start, duration, type='sine', volume=0.045, endFreq=null) {
+        if (!soundOn) return;
+        const ac = context(); if (!ac) return;
+        const osc = ac.createOscillator(), gain = ac.createGain();
+        osc.type = type; osc.frequency.setValueAtTime(freq, ac.currentTime + start);
+        if (endFreq) osc.frequency.exponentialRampToValueAtTime(endFreq, ac.currentTime + start + duration);
+        gain.gain.setValueAtTime(0.0001, ac.currentTime + start);
+        gain.gain.exponentialRampToValueAtTime(volume, ac.currentTime + start + 0.012);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + start + duration);
+        osc.connect(gain); gain.connect(ac.destination);
+        osc.start(ac.currentTime + start); osc.stop(ac.currentTime + start + duration + 0.02);
+    }
+    function play(kind) {
+        if (!soundOn) return;
+        if (kind === 'spinner') { for(let i=0;i<9;i++) tone(520+i*28,i*.095,.045,'triangle',.025); tone(880,.92,.22,'sine',.05,620); }
+        else if (kind === 'dice') { tone(180,0,.10,'triangle',.05,110); tone(240,.12,.10,'triangle',.04,150); tone(520,.25,.15,'sine',.045); }
+        else if (kind === 'coin') { tone(1050,0,.12,'sine',.04,1450); tone(1450,.13,.28,'sine',.035,780); }
+        else if (kind === 'card') { tone(420,0,.07,'triangle',.035,300); tone(680,.09,.13,'sine',.035,520); }
+        else if (kind === 'success') { tone(660,0,.13,'sine',.045); tone(880,.14,.18,'sine',.05); tone(1100,.34,.25,'sine',.045); }
+        else if (kind === 'try') { tone(440,0,.18,'sine',.04,370); tone(330,.20,.22,'sine',.035,280); }
+        else if (kind === 'bulk') { tone(500,0,.09,'triangle',.035); tone(700,.11,.12,'triangle',.04); tone(900,.25,.18,'sine',.04); }
+    }
+    toggle.addEventListener('click', () => {
+        soundOn = !soundOn;
+        try { localStorage.setItem('pwSoundEnabled', String(soundOn)); } catch (_) {}
+        updateToggle();
+        if (soundOn) { context(); tone(760,0,.12,'sine',.035); }
+    });
+    document.querySelectorAll('form[method="POST"],form[method="post"]').forEach(form => {
+        form.addEventListener('submit', event => {
+            if (form.dataset.pwSoundSubmitted === 'yes') return;
+            const submitter = event.submitter;
+            const action = form.querySelector('input[name="action"]')?.value || '';
+            if (action === 'prediction') return; // outcome feedback is played on the result page
+            let sound = '', wait = 0;
+            if (action === 'bulk') { sound = 'bulk'; wait = 350; }
+            else {
+                const label = (submitter?.textContent || '').toLowerCase();
+                if (label.includes('spin')) { sound = 'spinner'; wait = 1150; }
+                else if (label.includes('roll')) { sound = 'dice'; wait = 450; }
+                else if (label.includes('flip')) { sound = 'coin'; wait = 450; }
+                else if (label.includes('draw')) { sound = 'card'; wait = 350; }
+            }
+            if (!sound || !soundOn) return;
+            event.preventDefault();
+            play(sound);
+            form.dataset.pwSoundSubmitted = 'yes';
+            window.setTimeout(() => {
+                if (submitter && form.requestSubmit) form.requestSubmit(submitter);
+                else form.submit();
+            }, wait);
+        });
+    });
+    const result = [...document.querySelectorAll('.result')].find(el => /correct prediction|good try/i.test(el.textContent));
+    if (result) {
+        const correct = /correct prediction/i.test(result.textContent);
+        // Try on load; if browser blocks autoplay, play after the visitor's next interaction.
+        const pending = correct ? 'success' : 'try';
+        let played = false;
+        const attempt = () => { if (!played && soundOn) { played = true; play(pending); } };
+        document.addEventListener('pointerdown', attempt, {once:true});
+        document.addEventListener('keydown', attempt, {once:true});
+    }
+})();
+</script>
+
 </body>
 </html>

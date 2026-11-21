@@ -2,6 +2,8 @@
 from flask import Flask, render_template, request, session, redirect, url_for
 import random
 import os
+import json
+from pathlib import Path
 
 app = Flask(__name__)
 
@@ -9,6 +11,12 @@ app.secret_key = os.environ.get(
     "SECRET_KEY",
     "dev-only-change-this-before-deploying"
 )
+
+# UN World Population Prospects 2024: compact 2026 complete life-table data.
+DATA_PATH = Path(__file__).parent / "data" / "life_tables_2026.json"
+with DATA_PATH.open(encoding="utf-8") as data_file:
+    LIFE_TABLE_DATA = json.load(data_file)
+
 
 
 @app.route("/")
@@ -27,6 +35,56 @@ def index():
         "index.html",
         dashboard_totals=dashboard_totals,
         overall_total=overall_total
+    )
+
+
+
+
+@app.route("/survival-calculator", methods=["GET", "POST"])
+def survival_calculator():
+    """Population-level conditional survival estimate using UN WPP 2024 life tables."""
+    current_age = ""
+    target_age = ""
+    sex = "combined"
+    error = None
+    results = None
+
+    sex_options = {"combined": "Both sexes", "male": "Male", "female": "Female"}
+
+    if request.method == "POST":
+        current_age = request.form.get("current_age", "").strip()
+        target_age = request.form.get("target_age", "").strip()
+        sex = request.form.get("sex", "combined")
+        try:
+            x = int(current_age)
+            y = int(target_age)
+            if sex not in sex_options:
+                raise ValueError
+            if not (0 <= x <= 99 and 0 <= y <= 99):
+                error = "Please enter ages from 0 to 99."
+            elif y < x:
+                error = "Target age must be greater than or equal to current age."
+            else:
+                results = {}
+                for country in ("India", "World"):
+                    life_table = LIFE_TABLE_DATA["countries"][country][sex]
+                    lx = float(life_table[str(x)])
+                    ly = float(life_table[str(y)])
+                    probability = (ly / lx) * 100 if lx else 0
+                    results[country] = {
+                        "probability": round(probability, 2),
+                        "survivors_current": round(lx, 1),
+                        "survivors_target": round(ly, 1)
+                    }
+        except (TypeError, ValueError, KeyError):
+            error = "Please enter valid whole-number ages and select a valid group."
+
+    return render_template(
+        "survival_calculator.html", current_age=current_age, target_age=target_age,
+        sex=sex, sex_options=sex_options, error=error, results=results,
+        source=LIFE_TABLE_DATA.get("source", "United Nations, World Population Prospects 2024"),
+        table=LIFE_TABLE_DATA.get("table", "Complete Life Table, Medium variant"),
+        data_year=LIFE_TABLE_DATA.get("period", 2026)
     )
 
 
@@ -436,3 +494,4 @@ if __name__ == "__main__":
         port=int(os.environ.get("PORT", 5000)),
         debug=False
     )
+

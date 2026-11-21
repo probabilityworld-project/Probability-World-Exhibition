@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life &amp; Survival Probability | Probability World 3.0</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header><h1>🌍 Life &amp; Survival Probability Calculator</h1><p>Explore population-level survival probabilities with statistical life-table data</p></header>
+<main class="survival-page">
+<section class="survival-panel">
+<h2>Calculate a Survival Probability</h2>
+<p class="survival-intro">Enter a current age and a target age. The calculator compares the estimated probability of surviving from the current age to the target age in India and the World, using the selected UN life-table group.</p>
+<form method="POST" class="survival-form">
+<div class="survival-field"><label for="current_age">Current age (x)</label><input id="current_age" name="current_age" type="number" min="0" max="99" step="1" required value="{{ current_age }}" placeholder="e.g. 20"></div>
+<div class="survival-field"><label for="target_age">Target age (y)</label><input id="target_age" name="target_age" type="number" min="0" max="99" step="1" required value="{{ target_age }}" placeholder="e.g. 80"></div>
+<div class="survival-field"><label for="sex">Population group</label><select id="sex" name="sex">{% for key, label in sex_options.items() %}<option value="{{ key }}" {% if sex == key %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
+<button class="survival-submit" type="submit">🧮 CALCULATE PROBABILITY</button>
+</form>
+{% if error %}<div class="survival-error" role="alert">{{ error }}</div>{% endif %}
+{% if results %}
+<div class="survival-results" aria-live="polite">
+{% for country, result in results.items() %}<article class="survival-result-card"><h3>{% if country == "India" %}🇮🇳{% else %}🌐{% endif %} {{ country }}</h3><div class="survival-percent">{{ "%.2f"|format(result.probability) }}%</div><p class="survival-detail">Estimated probability of surviving from age {{ current_age }} to age {{ target_age }}.</p><div class="survival-bar" aria-label="Estimated probability"><span style="width: {{ result.probability }}%;"></span></div><p class="survival-detail">Life-table survivors at age {{ current_age }}: <strong>{{ "{:,.1f}".format(result.survivors_current) }}</strong><br>Life-table survivors at age {{ target_age }}: <strong>{{ "{:,.1f}".format(result.survivors_target) }}</strong> (per 100,000 at birth)</p></article>{% endfor %}
+</div>
+<div class="survival-panel" style="margin-top:22px;background:#0b2238;"><h3 style="text-align:center;color:#67e8f9;">How is it calculated?</h3><p class="survival-formula">P(survive to y | alive at x) = (l<sub>y</sub> ÷ l<sub>x</sub>) × 100</p><p class="survival-note"><strong>l<sub>x</sub></strong> = number of life-table survivors at current age x. <strong>l<sub>y</sub></strong> = number of life-table survivors at target age y. The ratio gives a conditional survival probability for the selected life table.</p></div>
+{% endif %}
+</section>
+<section class="survival-panel"><h2>Important: What this result means</h2><p class="survival-intro">This is a population-level statistical estimate based on the mortality assumptions in the selected life table. It is <strong>not</strong> a personal prediction, medical assessment, or guarantee of how long any individual will live. A person's actual outcome can differ because of health, living conditions, behaviour, environment, and many other factors.</p><p class="survival-note"><strong>Data source:</strong> {{ source }} — {{ table }}, year {{ data_year }} (Medium variant; a modelled projection, not a measured outcome for that future year). Ages are shown from 0 to 99. The World and India values are calculated from the same UN dataset and year for a consistent comparison.<br>Official source: <a href="https://population.un.org/wpp/" target="_blank" rel="noopener">UN World Population Prospects 2024</a>. Data is attributed to the United Nations, Department of Economic and Social Affairs, Population Division.</p></section>
+<div style="text-align:center;"><a class="survival-back" href="/"><button type="button">⬅ Back to Home</button></a></div>
+</main><footer><p>Probability World 3.0 | Learn • Experiment • Discover</p></footer>
+</body></html>
